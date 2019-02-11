@@ -22,29 +22,32 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Flip();
-        if (rb.velocity.y == 0.0)
-        {
-            inair = 0;
-        }
-        if (Input.GetAxis("Horizontal") == 0 && inair == 0)
-        {
-            anim.SetInteger("state", 0);
-        }
-        if(Input.GetAxis("Horizontal") != 0 && inair != 1)
-        {
-            anim.SetInteger("state", 1);
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && inair == 0)
-        {
-            inair = 1;
-            anim.SetInteger("state", 3);
-            jump();
-        }
+        //Flip();
+        //if (rb.velocity.y == 0.0)
+        //{
+        //    inair = 0;
+        //}
+        //if (Input.GetAxis("Horizontal") == 0 && inair == 0)
+        //{
+        //    anim.SetInteger("state", 0);
+        //}
+        //if(Input.GetAxis("Horizontal") != 0 && inair != 1)
+        //{
+        //    anim.SetInteger("state", 1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Space) && inair == 0)
+        //{
+        //    inair = 1;
+        //    anim.SetInteger("state", 3);
+        //    jump();
+        //}
         if (Input.GetKeyDown(KeyCode.E))
         {
+
+            print("fire");
             fire();
         }
+
     }
     private void FixedUpdate()
     {
@@ -82,10 +85,29 @@ public class player : MonoBehaviour
     }
     public void fire()
     {
-        GameObject Bullet1 = Instantiate(Bullet);
-        Bullet1.transform.position = GameObject.Find("firepoint").transform.position;
-        Bullet1.GetComponent<Rigidbody2D>().velocity = new Vector2(10,0);
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (Vector2)((worldMousePos - transform.position));
+        direction.Normalize();
 
-       //Bullet.GetComponent<Rigidbody2D>().AddForce(new Vector2(10, 0));
+
+
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = 5.23f;
+
+        Vector3 objectPos = Camera.main.WorldToScreenPoint(transform.position);
+        mousePos.x = mousePos.x - objectPos.x;
+        mousePos.y = mousePos.y - objectPos.y;
+
+        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+        Quaternion a = Quaternion.Euler(new Vector3(0, 0, angle));
+
+
+
+
+
+        GameObject Bullet1 = Instantiate(Bullet, transform.position + (Vector3)(direction * 0.5f),
+                                 a);
+        Bullet1.GetComponent<Rigidbody2D>().velocity = direction * 10;
+
     }
 }
